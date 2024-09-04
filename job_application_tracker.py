@@ -51,7 +51,7 @@ def get_message_content(service, msg_id):
                 encoded_string += '=' * padding_length
             decoded_data = base64.b64decode(data)
             decoded_string = decoded_data.decode('utf-8')
-            print(decoded_string,'\n')
+            print(list(filter(None, decoded_string.split('\n'))))
     
     return subject, parsedate_to_datetime(date), "decoded_data"
 
