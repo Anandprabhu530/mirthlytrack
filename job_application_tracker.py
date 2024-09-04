@@ -41,6 +41,7 @@ def get_message_content(service, msg_id):
     subject = next(header['value'] for header in headers if header['name'] == 'Subject')
     date = next(header['value'] for header in headers if header['name'] == 'Date')
     
+    ans = [];
     if 'parts' in payload:
         parts = payload['parts']
         if(parts[0]['body']['size'] > 0):
@@ -51,14 +52,16 @@ def get_message_content(service, msg_id):
                 encoded_string += '=' * padding_length
             decoded_data = base64.b64decode(data)
             decoded_string = decoded_data.decode('utf-8')
-            print(list(filter(None, decoded_string.split('\n'))))
+            print(subject)
+            ans.append(list(filter(None, decoded_string.split('\n'))))
     
-    return subject, parsedate_to_datetime(date), "decoded_data"
+    return subject, date, ans
 
 def extract_company_name(subject):
     # You may need to adjust this regex based on your email subjects
     match = re.search(r'(Application|Job) (?:for|at) (.+)', subject)
     if match:
+        print(match.group(2).strip())
         return match.group(2).strip()
     return "Unknown Company"
 
@@ -74,8 +77,8 @@ def analyze_job_applications():
     job_data = []
     
     for msg in application_messages:
-        test = get_message_content(service, msg['id'])
-    #     company = extract_company_name(subject)
+        (subject, date, ans) = get_message_content(service, msg['id'])
+        company = extract_company_name(subject)
     #     applied_date = date
         
     #     # Determine status based on email content
